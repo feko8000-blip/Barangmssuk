@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manifest Barang Masuk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1F2421;
+    --panel:#262E2A;
+    --paper:#EDE9DC;
+    --paper-dim:#DDD7C4;
+    --orange:#E8630A;
+    --yellow:#F4B942;
+    --green-ok:#3E7C59;
+    --red-no:#C33C2D;
+    --text-light:#F2EFE6;
+    --text-dim:#B9B3A1;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text-light);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+  }
+  .hazard{
+    height:10px;
+    background-image:repeating-linear-gradient(45deg,var(--yellow) 0 14px, var(--ink) 14px 28px);
+  }
+  header{
+    padding:28px 24px 20px;
+    position:relative;
+    border-bottom:1px solid #3a423d;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    color:var(--text-dim);
+    text-transform:uppercase;
+  }
+  h1{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+    font-size:clamp(28px,6vw,42px);
+    margin:4px 0 0;
+  }
+  .stamp{
+    position:absolute;
+    top:20px; right:24px;
+    border:3px solid var(--orange);
+    color:var(--orange);
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:12px;
+    letter-spacing:.12em;
+    padding:8px 14px;
+    transform:rotate(6deg);
+    border-radius:4px;
+    opacity:.9;
+  }
+  main{
+    max-width:1080px;
+    margin:0 auto;
+    padding:24px;
+  }
+  .summary{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:14px;
+    margin-bottom:28px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid #3a423d;
+    border-radius:6px;
+    padding:16px 18px;
+  }
+  .card .label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .card .value{
+    font-family:'Oswald',sans-serif;
+    font-size:26px;
+    font-weight:600;
+    margin-top:4px;
+  }
+  .card.accent{ border-color:var(--orange); }
+  .card.accent .value{ color:var(--orange); }
+
+  .panel-box{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:8px;
+    padding:20px;
+    margin-bottom:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  .panel-box h2{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    font-size:16px;
+    letter-spacing:.08em;
+    margin:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .panel-box h2::before{
+    content:"";
+    width:18px;height:2px;
+    background:var(--orange);
+    display:inline-block;
+  }
+  form{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:10px 12px;
+  }
+  form .field{ display:flex; flex-direction:column; gap:4px; }
+  form .field.span2{ grid-column:span 2; }
+  form .field.span3{ grid-column:span 3; }
+  form .field.span6{ grid-column:span 6; }
+  label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#5b564a;
+  }
+  input, select{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:14px;
+    padding:9px 10px;
+    border:1px solid #b9b3a1;
+    border-radius:4px;
+    background:#fbf9f3;
+    color:var(--ink);
+  }
+  input:focus, select:focus{
+    outline:2px solid var(--orange);
+    outline-offset:1px;
+  }
+  .btn{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    font-size:13px;
+    font-weight:600;
+    border:none;
+    border-radius:4px;
+    padding:11px 18px;
+    cursor:pointer;
+    transition:filter .15s ease, transform .1s ease;
+  }
+  .btn:active{ transform:translateY(1px); }
+  .btn-primary{ background:var(--orange); color:#fff; }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn-ghost{ background:transparent; color:var(--ink); border:1px solid #b9b3a1; }
+  .btn-ghost:hover{ background:#e4dfcd; }
+  .btn-danger{ background:transparent; color:var(--red-no); border:1px solid var(--red-no); padding:6px 10px; font-size:11px; }
+  .btn-danger:hover{ background:rgba(195,60,45,.1); }
+  .btn-edit{ background:transparent; color:var(--green-ok); border:1px solid var(--green-ok); padding:6px 10px; font-size:11px; }
+  .btn-edit:hover{ background:rgba(62,124,89,.1); }
+
+  .toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .toolbar input[type=text]{ min-width:220px; background:var(--panel); color:var(--text-light); border-color:#3a423d; }
+  .toolbar input[type=text]::placeholder{ color:var(--text-dim); }
+
+  .manifest{
+    background:var(--panel);
+    border:1px solid #3a423d;
+    border-radius:8px;
+    overflow:hidden;
+  }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  thead th{
+    font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;
+    font-size:10.5px;
+    letter-spacing:.06em;
+    color:var(--text-dim);
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px dashed #4a5449;
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:10px 12px;
+    border-bottom:1px solid #333b36;
+    vertical-align:middle;
+  }
+  tbody tr:hover{ background:#2d362f; }
+  td.num, th.num{ text-align:right; font-family:'IBM Plex Mono',monospace; }
+  .actions{ display:flex; gap:6px; }
+  .empty{
+    padding:40px 20px;
+    text-align:center;
+    color:var(--text-dim);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+  }
+  footer{
+    text-align:center;
+    padding:20px;
+    color:var(--text-dim);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+  }
+  @media (max-width:640px){
+    form{ grid-template-columns:repeat(2,1fr); }
+    form .field.span2, form .field.span3, form .field.span6{ grid-column:span 2; }
+    table{ font-size:12px; }
+    .stamp{ position:static; display:inline-block; margin-top:10px; transform:rotate(-2deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="hazard"></div>
+<header>
+  <div class="eyebrow">Gudang &middot; Logistik &middot; Penerimaan</div>
+  <h1>Manifest Barang Masuk</h1>
+  <div class="stamp">Tercatat</div>
+</header>
+
+<main>
+  <section class="summary" id="summary"></section>
+
+  <div class="panel-box">
+    <h2 id="form-title">Catat Penerimaan Baru</h2>
+    <form id="entry-form">
+      <div class="field span2">
+        <label for="tanggal">Tanggal</label>
+        <input type="date" id="tanggal" required>
+      </div>
+      <div class="field span2">
+        <label for="nama">Nama Barang</label>
+        <input type="text" id="nama" placeholder="cth. Kertas HVS A4" required>
+      </div>
+      <div class="field span2">
+        <label for="supplier">Pemasok</label>
+        <input type="text" id="supplier" placeholder="cth. CV Sumber Jaya">
+      </div>
+
+      <div class="field span2">
+        <label for="jumlah">Jumlah</label>
+        <input type="number" id="jumlah" min="0" step="1" placeholder="0" required>
+      </div>
+      <div class="field span2">
+        <label for="satuan">Satuan</label>
+        <input type="text" id="satuan" placeholder="cth. dus, pcs, kg">
+      </div>
+      <div class="field span2">
+        <label for="harga">Harga Satuan (Rp)</label>
+        <input type="number" id="harga" min="0" step="100" placeholder="0" required>
+      </div>
+
+      <div class="field span2">
+        <label for="nofaktur">No. Faktur/Nota</label>
+        <input type="text" id="nofaktur" placeholder="opsional">
+      </div>
+      <div class="field span4">
+        <label for="catatan">Catatan</label>
+        <input type="text" id="catatan" placeholder="opsional">
+      </div>
+
+      <div class="field span6" style="flex-direction:row; gap:10px; margin-top:4px;">
+        <button type="submit" class="btn btn-primary" id="submit-btn">+ Simpan Barang Masuk</button>
+        <button type="button" class="btn btn-ghost" id="cancel-edit" style="display:none;">Batal Edit</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Cari nama barang / pemasok / no. faktur...">
+    <button class="btn btn-ghost" id="export-btn">Ekspor CSV</button>
+  </div>
+
+  <div class="manifest">
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Barang</th>
+          <th>Pemasok</th>
+          <th class="num">Jumlah</th>
+          <th class="num">Harga Satuan</th>
+          <th class="num">Total</th>
+          <th>No. Faktur</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+    <div class="empty" id="empty-state">Belum ada catatan barang masuk. Mulai catat di atas.</div>
+  </div>
+</main>
+
+<footer>Data tersimpan secara lokal untuk akun Anda &middot; Manifest Barang Masuk</footer>
+
+<script>
+const STORAGE_KEY = 'barang-masuk:entries';
+let entries = [];
+let editingId = null;
+
+const form = document.getElementById('entry-form');
+const tbody = document.getElementById('table-body');
+const emptyState = document.getElementById('empty-state');
+const summaryEl = document.getElementById('summary');
+const searchInput = document.getElementById('search');
+const cancelBtn = document.getElementById('cancel-edit');
+const submitBtn = document.getElementById('submit-btn');
+const formTitle = document.getElementById('form-title');
+
+function formatRupiah(n){
+  return 'Rp ' + Number(n).toLocaleString('id-ID', {maximumFractionDigits:0});
+}
+function formatTanggal(iso){
+  if(!iso) return '-';
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'});
+}
+function uid(){
+  return 'e' + Date.now() + Math.random().toString(16).slice(2,8);
+}
+
+async function loadEntries(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    entries = res ? JSON.parse(res.value) : [];
+  }catch(e){
+    entries = [];
+  }
+  render();
+}
+
+async function saveEntries(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(entries), false);
+  }catch(e){
+    console.error('Gagal menyimpan data', e);
+  }
+}
+
+function render(){
+  const query = searchInput.value.trim().toLowerCase();
+  const filtered = entries
+    .filter(e => {
+      if(!query) return true;
+      return (e.nama||'').toLowerCase().includes(query) ||
+             (e.supplier||'').toLowerCase().includes(query) ||
+             (e.nofaktur||'').toLowerCase().includes(query);
+    })
+    .sort((a,b) => (b.tanggal||'').localeCompare(a.tanggal||'') || b.createdAt - a.createdAt);
+
+  tbody.innerHTML = '';
+  emptyState.style.display = filtered.length ? 'none' : 'block';
+
+  filtered.forEach(e => {
+    const total = (Number(e.jumlah)||0) * (Number(e.harga)||0);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${formatTanggal(e.tanggal)}</td>
+      <td>${escapeHtml(e.nama)}${e.catatan ? `<div style="color:var(--text-dim);font-size:11.5px;margin-top:2px;">${escapeHtml(e.catatan)}</div>` : ''}</td>
+      <td>${escapeHtml(e.supplier) || '-'}</td>
+      <td class="num">${Number(e.jumlah).toLocaleString('id-ID')} ${escapeHtml(e.satuan)||''}</td>
+      <td class="num">${formatRupiah(e.harga)}</td>
+      <td class="num" style="color:var(--yellow); font-weight:600;">${formatRupiah(total)}</td>
+      <td>${escapeHtml(e.nofaktur) || '-'}</td>
+      <td>
+        <div class="actions">
+          <button class="btn-edit" data-id="${e.id}" data-action="edit">Ubah</button>
+          <button class="btn-danger" data-id="${e.id}" data-action="delete">Hapus</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  renderSummary();
+}
+
+function renderSummary(){
+  const today = new Date().toISOString().slice(0,10);
+  const totalItems = entries.reduce((sum,e) => sum + (Number(e.jumlah)||0), 0);
+  const totalValue = entries.reduce((sum,e) => sum + (Number(e.jumlah)||0)*(Number(e.harga)||0), 0);
+  const todayCount = entries.filter(e => e.tanggal === today).length;
+  const supplierSet = new Set(entries.map(e => (e.supplier||'').trim()).filter(Boolean));
+
+  summaryEl.innerHTML = `
+    <div class="card accent">
+      <div class="label">Total Nilai Barang Masuk</div>
+      <div class="value">${formatRupiah(totalValue)}</div>
+    </div>
+    <div class="card">
+      <div class="label">Total Kuantitas</div>
+      <div class="value">${totalItems.toLocaleString('id-ID')}</div>
+    </div>
+    <div class="card">
+      <div class="label">Transaksi Hari Ini</div>
+      <div class="value">${todayCount}</div>
+    </div>
+    <div class="card">
+      <div class="label">Jumlah Pemasok</div>
+      <div class="value">${supplierSet.size}</div>
+    </div>
+  `;
+}
+
+function escapeHtml(str){
+  if(str === undefined || str === null) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+form.addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const entry = {
+    id: editingId || uid(),
+    tanggal: document.getElementById('tanggal').value,
+    nama: document.getElementById('nama').value.trim(),
+    supplier: document.getElementById('supplier').value.trim(),
+    jumlah: document.getElementById('jumlah').value,
+    satuan: document.getElementById('satuan').value.trim(),
+    harga: document.getElementById('harga').value,
+    nofaktur: document.getElementById('nofaktur').value.trim(),
+    catatan: document.getElementById('catatan').value.trim(),
+    createdAt: editingId ? (entries.find(e=>e.id===editingId)?.createdAt || Date.now()) : Date.now()
+  };
+
+  if(editingId){
+    entries = entries.map(e => e.id === editingId ? entry : e);
+    editingId = null;
+    cancelBtn.style.display = 'none';
+    submitBtn.textContent = '+ Simpan Barang Masuk';
+    formTitle.textContent = 'Catat Penerimaan Baru';
+  } else {
+    entries.push(entry);
+  }
+
+  await saveEntries();
+  form.reset();
+  document.getElementById('tanggal').value = new Date().toISOString().slice(0,10);
+  render();
+});
+
+cancelBtn.addEventListener('click', () => {
+  editingId = null;
+  form.reset();
+  document.getElementById('tanggal').value = new Date().toISOString().slice(0,10);
+  cancelBtn.style.display = 'none';
+  submitBtn.textContent = '+ Simpan Barang Masuk';
+  formTitle.textContent = 'Catat Penerimaan Baru';
+});
+
+tbody.addEventListener('click', async (ev) => {
+  const btn = ev.target.closest('button');
+  if(!btn) return;
+  const id = btn.dataset.id;
+  const action = btn.dataset.action;
+
+  if(action === 'delete'){
+    if(confirm('Hapus catatan ini?')){
+      entries = entries.filter(e => e.id !== id);
+      await saveEntries();
+      render();
+    }
+  }
+
+  if(action === 'edit'){
+    const e = entries.find(x => x.id === id);
+    if(!e) return;
+    editingId = id;
+    document.getElementById('tanggal').value = e.tanggal || '';
+    document.getElementById('nama').value = e.nama || '';
+    document.getElementById('supplier').value = e.supplier || '';
+    document.getElementById('jumlah').value = e.jumlah || '';
+    document.getElementById('satuan').value = e.satuan || '';
+    document.getElementById('harga').value = e.harga || '';
+    document.getElementById('nofaktur').value = e.nofaktur || '';
+    document.getElementById('catatan').value = e.catatan || '';
+    cancelBtn.style.display = 'inline-block';
+    submitBtn.textContent = 'Perbarui Catatan';
+    formTitle.textContent = 'Ubah Catatan Barang Masuk';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+});
+
+searchInput.addEventListener('input', render);
+
+document.getElementById('export-btn').addEventListener('click', () => {
+  if(!entries.length){
+    alert('Belum ada data untuk diekspor.');
+    return;
+  }
+  const header = ['Tanggal','Nama Barang','Pemasok','Jumlah','Satuan','Harga Satuan','Total','No Faktur','Catatan'];
+  const rows = entries.map(e => [
+    e.tanggal, e.nama, e.supplier, e.jumlah, e.satuan, e.harga,
+    (Number(e.jumlah)||0)*(Number(e.harga)||0), e.nofaktur, e.catatan
+  ]);
+  const csv = [header, ...rows].map(r => r.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'barang-masuk.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('tanggal').value = new Date().toISOString().slice(0,10);
+loadEntries();
+</script>
+
+</body>
+</html>
